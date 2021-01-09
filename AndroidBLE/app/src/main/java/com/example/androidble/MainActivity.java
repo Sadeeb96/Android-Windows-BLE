@@ -1,7 +1,9 @@
 package com.example.androidble;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
 
+import android.Manifest;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothManager;
 import android.bluetooth.le.BluetoothLeScanner;
@@ -28,7 +30,9 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        ActivityCompat.requestPermissions(this,new String[]{Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION}, 1001);
         initialize();
+        startScan();
 
     }
     private void initialize()
@@ -44,6 +48,9 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onScanResult(int callbackType, ScanResult result) {
                 super.onScanResult(callbackType, result);
+                devices.addDevice(result.getDevice());
+                System.out.println("NEW DEVICE NAME: "+result.getDevice().getName()+" Total Devices: "+ devices.getCount());
+                devices.notifyDataSetChanged();
             }
         };
         isScanning = false;
@@ -71,17 +78,22 @@ public class MainActivity extends AppCompatActivity {
             handler.postDelayed(new Runnable() {
                 @Override
                 public void run() {
-                    isScanning = false;
-                    bleScanner.stopScan(bleScanCallBack);
+                    stopScan();
                 }
             },scanDuration);
+            System.out.println("---------------STARTING SCAN------------------");
             isScanning = true;
             bleScanner.startScan(bleScanCallBack);
 
         }else{
-            isScanning = false;
-            bleScanner.stopScan(bleScanCallBack);
+            stopScan();
         }
 
+    }
+    private void stopScan()
+    {
+        System.out.println("---------------STOPPING SCAN------------------");
+        isScanning = false;
+        bleScanner.stopScan(bleScanCallBack);
     }
 }
