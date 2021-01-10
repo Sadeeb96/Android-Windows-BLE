@@ -5,6 +5,7 @@ import androidx.core.app.ActivityCompat;
 
 import android.Manifest;
 import android.bluetooth.BluetoothAdapter;
+import android.bluetooth.BluetoothDevice;
 import android.bluetooth.BluetoothManager;
 import android.bluetooth.le.BluetoothLeScanner;
 import android.bluetooth.le.ScanCallback;
@@ -48,8 +49,8 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onScanResult(int callbackType, ScanResult result) {
                 super.onScanResult(callbackType, result);
-                devices.addDevice(result.getDevice());
-                System.out.println("NEW DEVICE NAME: "+result.getDevice().getName()+" Total Devices: "+ devices.getCount());
+                devices.addDevice(new MyBluetoothDevice(result.getDevice(),result.getRssi()));
+              //  System.out.println("NEW DEVICE NAME: "+result.getDevice().getName()+" Strength: "+ result.getRssi() +"Total Devices: "+ devices.getCount());
                 devices.notifyDataSetChanged();
             }
         };
