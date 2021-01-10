@@ -29,11 +29,7 @@ public class MyBluetoothDevice  {
 
     @Override
     public boolean equals(@Nullable Object obj) {
-        if (obj == null)
-            return false;
-        if (obj == this)
-            return true;
-        return this.device.getAddress() == ((MyBluetoothDevice)obj).device.getAddress() && this.device.getName() == ((MyBluetoothDevice)obj).device.getName();
+        return this.device.getAddress().equals(((MyBluetoothDevice)obj).device.getAddress() );
 
     }
 }

@@ -15,6 +15,9 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.os.Handler;
+import android.view.View;
+import android.widget.Button;
+import android.widget.ListView;
 import android.widget.Toast;
 
 public class MainActivity extends AppCompatActivity {
@@ -26,18 +29,29 @@ public class MainActivity extends AppCompatActivity {
     Handler handler;
     int scanDuration;
     BleDeviceListAdapter devices;
-
+    ListView device_list;
+    Button scanButton;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         ActivityCompat.requestPermissions(this,new String[]{Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION}, 1001);
         initialize();
-        startScan();
+        //startScan();
 
     }
     private void initialize()
     {
+        scanButton = (Button)findViewById(R.id.scan);
+        scanButton.setText("SCAN");
+        scanButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if(!isScanning)
+                    startScan();
+                else stopScan();
+            }
+        });
         if(!isBLESupported()){
             // Do Something Later
         }
@@ -56,8 +70,11 @@ public class MainActivity extends AppCompatActivity {
         };
         isScanning = false;
         handler = new Handler();
-        scanDuration = 10000;
+        scanDuration = 20000;
         devices = new BleDeviceListAdapter(this);
+        device_list =(ListView)findViewById(R.id.ble_device_list);
+        device_list.setAdapter(devices);
+
 
     }
     private boolean isBLESupported()
@@ -76,6 +93,7 @@ public class MainActivity extends AppCompatActivity {
     private void startScan()
     {
         if(!isScanning){
+            scanButton.setText("STOP SCAN");
             handler.postDelayed(new Runnable() {
                 @Override
                 public void run() {
@@ -96,5 +114,6 @@ public class MainActivity extends AppCompatActivity {
         System.out.println("---------------STOPPING SCAN------------------");
         isScanning = false;
         bleScanner.stopScan(bleScanCallBack);
+        scanButton.setText("SCAN");
     }
 }

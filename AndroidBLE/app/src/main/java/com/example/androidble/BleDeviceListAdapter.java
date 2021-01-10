@@ -7,6 +7,9 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
+import android.widget.TextView;
+
+import androidx.recyclerview.widget.RecyclerView;
 
 import java.util.ArrayList;
 
@@ -18,20 +21,36 @@ public class BleDeviceListAdapter extends BaseAdapter {
         super();
         mLeDevices = new ArrayList<MyBluetoothDevice>();
         mInflator = context.getLayoutInflater();
+        //mInflator = LayoutInflater.from(context);
 
 
     }
     public void addDevice(MyBluetoothDevice device) {
         if(!mLeDevices.contains(device)) {
             mLeDevices.add(device);
-            System.out.println("Device Address: "+device.getDevice().getAddress() + "Strength: "+device.getRssi()+ "ADDED");
+            System.out.println("Device Address: "+device.getDevice().getAddress() + " Strength: "+device.getRssi()+ " ADDED "+getCount());
         }else{
             int index = mLeDevices.indexOf(device);
             if(getDevice(index).getRssi() != device.getRssi()){
                 mLeDevices.get(index).setRssi(device.getRssi());
-                System.out.println("Device Address: "+device.getDevice().getAddress() + "Strength: "+device.getRssi()+ "UPDATED");
+                System.out.println("Device Address: "+device.getDevice().getAddress() + " Strength: "+device.getRssi()+ " UPDATED");
             }
         }
+        /*for(int i=0;i<mLeDevices.size();i++)
+        {
+            if(device.equals(mLeDevices.get(i))){
+                if(device.getRssi() != mLeDevices.get(i).getRssi()){
+                mLeDevices.get(i).setRssi(device.getRssi());
+                System.out.println("Device Address: "+device.getDevice().getAddress() + " Strength: "+device.getRssi()+ " Signal Updated "+getCount());
+                }
+                return;
+            }
+        }
+
+            mLeDevices.add(device);
+            System.out.println("Device Address: "+device.getDevice().getAddress() + " Strength: "+device.getRssi()+ " ADDED "+getCount());
+            */
+
     }
 
     public MyBluetoothDevice getDevice(int position) {
@@ -59,7 +78,21 @@ public class BleDeviceListAdapter extends BaseAdapter {
 
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
-        return null;
         // Implement
+        RecyclerView.ViewHolder viewHolder;
+        if(convertView == null)
+        {
+            convertView = mInflator.inflate(R.layout.device_list_item,parent,false);
+        }
+        MyBluetoothDevice currentDevice = (MyBluetoothDevice)getItem(position);
+        TextView deviceName = (TextView) convertView.findViewById(R.id.device_name);
+        TextView deviceAddress = (TextView) convertView.findViewById(R.id.device_address);
+        TextView deviceRSSI = (TextView) convertView.findViewById(R.id.device_strength);
+        deviceName.setText(currentDevice.getDevice().getName());
+        deviceAddress.setText(currentDevice.getDevice().getAddress());
+        deviceRSSI.setText(currentDevice.getRssi()+"");
+        return convertView;
+
+
     }
 }
